@@ -7,15 +7,17 @@ const chatContainer = document.querySelector('#chat_container');
 let loadInterval;
 
 function loader(element){
-  element.textContent =''
-  //if this process will start every 300mili seconds
-  loadInterval = setInterval(() =>{
-    element.textContent += '.';
+  if(element){
+    element.textContent = ''
+    //if this process will start every 300mili seconds
+    loadInterval = setInterval(() =>{
+      element.textContent += '.';
 
-    if(element.textContent === '....') {
-      element.textContent = '';
-      }
-  }, 300)
+      if(element.textContext === '....') {
+        element.textContent = '';
+        }
+    }, 300)
+  }
 }
 
 //this will send each letter one by one
@@ -58,7 +60,7 @@ function chatStripe(isAi, value, uniqueId){
       </div>
     </div>
     
-    `
+  `
   )
 }
 
@@ -67,8 +69,9 @@ const handleSubmit = async(e)=>{
   e.preventDefault();
   const data = new FormData(form);
   //user chatstripe
+  
   chatContainer.innerHTML += chatStripe(false, data.get('prompt'));
-
+  
   // clear the form after it is typed
   form.reset();
 
@@ -94,18 +97,21 @@ const handleSubmit = async(e)=>{
   })
   clearInterval(loadInterval)
   // empty string to await ....
-  messageDiv.innerHTML = '';
-  // parse data from backend after checking
-  if(response.ok) {
-    const data = await response.json();
-    const parseData = data.bit.trim();
-
-    typeText(messageDiv, parseData)
-  }else{
-    const err = await response.text();
-    messageDiv.innerHTML = 'Something went wrong'
-    alert(err);
+  if(messageDiv){
+    messageDiv.innerHTML = '';
+    // parse data from backend after checking
+    if(response.ok) {
+      const data = await response.json();
+      const parseData = data.bit.trim();
+      console.log(parseData, "HERE")
+      typeText(messageDiv, parseData)
+    }else{
+      const err = await response.text();
+      messageDiv.innerHTML = 'Something went wrong'
+      alert(err);
+    }
   }
+  
 
 
   // Another function for API response
